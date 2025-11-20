@@ -21,7 +21,7 @@ import { SearchIcon } from './components/icons/SearchIcon';
 
 // --- Gateway Section Components ---
 const GatewayCard: React.FC<{
-  imageUrl: string;
+  image_url: string;
   headline: string;
   description: string;
   buttonText: string;
@@ -120,7 +120,7 @@ const HomePage: React.FC<{
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 font-sans" style={pageStyle}>
-      {isBannerVisible && <AnnouncementBanner text={content.announcementText} onDismiss={onDismissBanner} />}
+      {isBannerVisible && <AnnouncementBanner text={content.announcement_text} onDismiss={onDismissBanner} />}
       <Header logo={logoUrl} />
       <main>
         {/* Hero Section */}
@@ -128,10 +128,10 @@ const HomePage: React.FC<{
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
           <div className="space-y-6 z-10">
             <h2 className="text-5xl md:text-7xl font-serif font-extrabold text-white tracking-tight [text-shadow:0_3px_6px_rgba(0,0,0,0.5)]">
-              {content.heroTitle}
+              {content.hero_title}
             </h2>
             <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto [text-shadow:0_2px_4px_rgba(0,0,0,0.5)]">
-              {content.heroSubtitle}
+              {content.hero_subtitle}
             </p>
             <a href="#products" onClick={handleSmoothScroll} className="inline-block bg-brand-blue text-white font-bold text-lg px-8 py-3 rounded-full shadow-lg hover:bg-opacity-80 transform hover:scale-105 transition-all duration-300">
               Buy Now
@@ -151,7 +151,7 @@ const HomePage: React.FC<{
                 <ProductList products={filteredProducts} />
               </section>
 
-              <AboutUs text={content.aboutText} imageUrl={content.aboutImageUrl} />
+              <AboutUs text={content.about_text} imageUrl={content.about_image_url} />
 
               <section id="hours" className="text-center">
                 <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-12">Opening Hours</h2>
@@ -304,14 +304,14 @@ const AdminHomepageContent: React.FC<{
         <div className="space-y-4">
           <input
             type="text"
-            value={content.heroTitle}
-            onChange={(e) => onContentChange('heroTitle', e.target.value)}
+            value={content.hero_title}
+            onChange={(e) => onContentChange('hero_title', e.target.value)}
             className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
             placeholder="Hero Title"
           />
           <textarea
-            value={content.heroSubtitle}
-            onChange={(e) => onContentChange('heroSubtitle', e.target.value)}
+            value={content.hero_subtitle}
+            onChange={(e) => onContentChange('hero_subtitle', e.target.value)}
             className="w-full h-24 px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
             placeholder="Hero Subtitle"
           />
@@ -320,8 +320,8 @@ const AdminHomepageContent: React.FC<{
       <div>
         <h3 className="text-xl font-semibold text-slate-200 mb-3">Announcement Banner</h3>
         <textarea
-          value={content.announcementText}
-          onChange={(e) => onContentChange('announcementText', e.target.value)}
+          value={content.announcement_text}
+          onChange={(e) => onContentChange('announcement_text', e.target.value)}
           className="w-full h-24 px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
           placeholder="Enter announcement text..."
         />
@@ -329,13 +329,13 @@ const AdminHomepageContent: React.FC<{
       <div className="space-y-4">
         <h3 className="text-xl font-semibold text-slate-200 mb-3">"About Us" Section</h3>
         <textarea
-          value={content.aboutText}
-          onChange={(e) => onContentChange('aboutText', e.target.value)}
+          value={content.about_text}
+          onChange={(e) => onContentChange('about_text', e.target.value)}
           className="w-full h-40 px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500"
           placeholder="Enter about us text..."
         />
         <div className="relative group w-full h-48">
-          <img src={content.aboutImageUrl} alt="About Us Background" className="w-full h-full rounded-md object-cover shadow-md bg-slate-700" />
+          <img src={content.about_image_url} alt="About Us Background" className="w-full h-full rounded-md object-cover shadow-md bg-slate-700" />
           <button
             onClick={() => bgInputRef.current?.click()}
             className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
@@ -344,7 +344,7 @@ const AdminHomepageContent: React.FC<{
             <CameraIcon className="w-8 h-8 text-white" />
           </button>
         </div>
-        <input type="file" ref={bgInputRef} onChange={(e) => handleFileChange(e, 'aboutImageUrl')} className="hidden" accept="image/*" />
+        <input type="file" ref={bgInputRef} onChange={(e) => handleFileChange(e, 'about_image_url')} className="hidden" accept="image/*" />
         <p className="text-center text-slate-400 text-sm">Hover over the image to change it.</p>
       </div>
     </div>
@@ -499,7 +499,7 @@ const AdminPage: React.FC<{
 
     const { data: urlData } = supabase.storage.from('images').getPublicUrl(filePath);
 
-    await props.onAddProduct({ name: newProductName, price: newProductPrice, imageUrl: urlData.publicUrl, isFresh: isNewProductFresh });
+    await props.onAddProduct({ name: newProductName, price: newProductPrice, image_url: urlData.publicUrl, is_fresh: isNewProductFresh });
 
     setNewProductName('');
     setNewProductPrice('');
@@ -552,7 +552,7 @@ const AdminPage: React.FC<{
     );
   }
 
-  const freshCount = props.products.filter(p => p.isFresh).length;
+  const freshCount = props.products.filter(p => p.is_fresh).length;
 
   return (
     <div className="min-h-screen bg-slate-900 text-white flex font-sans">
@@ -771,12 +771,12 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const bannerDismissed = sessionStorage.getItem('bannerDismissed');
-    if (bannerDismissed || !homepageContent.announcementText) {
+    if (bannerDismissed || !homepageContent.announcement_text) {
       setIsBannerVisible(false);
     } else {
       setIsBannerVisible(true);
     }
-  }, [homepageContent.announcementText]);
+  }, [homepageContent.announcement_text]);
 
   const handleDismissBanner = () => {
     setIsBannerVisible(false);
@@ -787,7 +787,7 @@ const App: React.FC = () => {
     return products
       .filter(p => {
         if (activeFilter === 'Fresh Today') {
-          return p.isFresh;
+          return p.is_fresh;
         }
         return true;
       })

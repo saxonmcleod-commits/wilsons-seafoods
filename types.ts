@@ -2,8 +2,8 @@ export interface FishProduct {
   id?: number;
   name: string;
   price: string;
-  imageUrl: string;
-  isFresh?: boolean;
+  image_url: string;
+  is_fresh?: boolean;
 }
 
 export interface OpeningHour {
@@ -12,10 +12,9 @@ export interface OpeningHour {
 }
 
 export interface HomepageContent {
-  heroTitle: string;
-  heroSubtitle: string;
-
-  announcementText: string;
-  aboutText: string;
-  aboutImageUrl: string;
+  hero_title: string;
+  hero_subtitle: string;
+  announcement_text: string;
+  about_text: string;
+  about_image_url: string;
 }

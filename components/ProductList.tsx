@@ -16,14 +16,14 @@ const XIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 );
 
-const ProductCard: React.FC<{ 
-  product: FishProduct; 
-  isAdmin?: boolean; 
-  onDelete?: (productName: string) => void; 
+const ProductCard: React.FC<{
+  product: FishProduct;
+  isAdmin?: boolean;
+  onDelete?: (productName: string) => void;
   onEdit?: (product: FishProduct) => void;
 }> = ({ product, isAdmin, onDelete, onEdit }) => (
   <div className="bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-700 hover:border-brand-blue/50 hover:shadow-2xl hover:shadow-brand-blue/10 transform hover:-translate-y-2 transition-all duration-300 flex flex-col text-left relative group">
-    {product.isFresh && (
+    {product.is_fresh && (
       <div className="absolute top-4 left-4 z-10 bg-brand-blue text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow">
         Fresh Today
       </div>
@@ -31,31 +31,31 @@ const ProductCard: React.FC<{
     {isAdmin && (
       <div className="absolute top-3 right-3 z-10 flex space-x-2">
         {onEdit && (
-            <button 
-                onClick={() => onEdit(product)}
-                className="p-1.5 rounded-full bg-slate-900/60 text-slate-400 hover:bg-sky-600 hover:text-white transition-colors"
-                aria-label={`Edit ${product.name}`}
-            >
-                <PencilIcon />
-            </button>
+          <button
+            onClick={() => onEdit(product)}
+            className="p-1.5 rounded-full bg-slate-900/60 text-slate-400 hover:bg-sky-600 hover:text-white transition-colors"
+            aria-label={`Edit ${product.name}`}
+          >
+            <PencilIcon />
+          </button>
         )}
         {onDelete && (
-            <button 
-                onClick={() => onDelete(product.name)} 
-                className="p-1.5 rounded-full bg-slate-900/60 text-slate-400 hover:bg-red-600 hover:text-white transition-colors"
-                aria-label={`Delete ${product.name}`}
-            >
-                <XIcon />
-            </button>
+          <button
+            onClick={() => onDelete(product.name)}
+            className="p-1.5 rounded-full bg-slate-900/60 text-slate-400 hover:bg-red-600 hover:text-white transition-colors"
+            aria-label={`Delete ${product.name}`}
+          >
+            <XIcon />
+          </button>
         )}
       </div>
     )}
     <div className="overflow-hidden">
-        <img 
-          src={product.imageUrl} 
-          alt={product.name} 
-          className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500 ease-in-out"
-        />
+      <img
+        src={product.image_url}
+        alt={product.name}
+        className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500 ease-in-out"
+      />
     </div>
     <div className="p-6 flex flex-col flex-grow">
       <h3 className="text-2xl font-serif font-bold text-white mb-2">{product.name}</h3>

@@ -2,10 +2,10 @@ import React from 'react';
 
 interface AboutUsProps {
   text: string;
-  imageUrl: string;
+  image_url: string;
 }
 
-const AboutUs: React.FC<AboutUsProps> = ({ text, imageUrl }) => {
+const AboutUs: React.FC<AboutUsProps> = ({ text, image_url }) => {
   return (
     <section id="about" className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
       <div className="order-2 md:order-1 text-center md:text-left">
@@ -15,8 +15,8 @@ const AboutUs: React.FC<AboutUsProps> = ({ text, imageUrl }) => {
         </p>
       </div>
       <div className="order-1 md:order-2">
-        <img 
-          src={imageUrl} 
+        <img
+          src={image_url}
           alt="Wilson's Seafoods storefront"
           className="rounded-xl shadow-lg w-full h-auto object-cover aspect-[4/3]"
         />
