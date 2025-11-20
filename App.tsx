@@ -89,19 +89,18 @@ const HomePage: React.FC<{
   content: HomepageContent;
   isBannerVisible: boolean;
   onDismissBanner: () => void;
-  onNavigateToAdmin: () => void;
   filteredProducts: FishProduct[];
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   activeFilter: string;
   setActiveFilter: (filter: string) => void;
-}> = ({ logoUrl, backgroundUrl, hours, content, isBannerVisible, onDismissBanner, onNavigateToAdmin, filteredProducts, searchTerm, setSearchTerm, activeFilter, setActiveFilter }) => {
-  const pageStyle = backgroundUrl ? { 
-      backgroundImage: `url(${backgroundUrl})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed',
-   } : {};
+}> = ({ logoUrl, backgroundUrl, hours, content, isBannerVisible, onDismissBanner, filteredProducts, searchTerm, setSearchTerm, activeFilter, setActiveFilter }) => {
+  const pageStyle = backgroundUrl ? {
+    backgroundImage: `url(${backgroundUrl})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+  } : {};
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -109,16 +108,16 @@ const HomePage: React.FC<{
     if (!targetId) return;
     const targetElement = document.querySelector(targetId);
     if (targetElement) {
-        const headerOffset = 120; // Account for sticky header
-        const elementPosition = targetElement.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth"
-        });
+      const headerOffset = 120; // Account for sticky header
+      const elementPosition = targetElement.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 font-sans" style={pageStyle}>
       {isBannerVisible && <AnnouncementBanner text={content.announcementText} onDismiss={onDismissBanner} />}
@@ -146,26 +145,26 @@ const HomePage: React.FC<{
               <GatewaySection onSmoothScroll={handleSmoothScroll} />
 
               <section id="products" className="text-center">
-                 <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Today's Catch</h2>
-                 <p className="text-slate-400 max-w-2xl mx-auto mb-12">Browse our selection of locally sourced, premium seafood.</p>
-                 <ProductFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
-                 <ProductList products={filteredProducts} />
+                <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Today's Catch</h2>
+                <p className="text-slate-400 max-w-2xl mx-auto mb-12">Browse our selection of locally sourced, premium seafood.</p>
+                <ProductFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+                <ProductList products={filteredProducts} />
               </section>
-              
+
               <AboutUs text={content.aboutText} imageUrl={content.aboutImageUrl} />
 
               <section id="hours" className="text-center">
                 <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-12">Opening Hours</h2>
                 <Hours hours={hours} />
               </section>
-              
+
               <ContactForm />
 
             </div>
           </div>
         </div>
       </main>
-      <Footer onNavigateToAdmin={onNavigateToAdmin} />
+      <Footer />
     </div>
   );
 };
@@ -178,7 +177,7 @@ const ProductFilters: React.FC<{
   setActiveFilter: (filter: string) => void;
 }> = ({ searchTerm, setSearchTerm, activeFilter, setActiveFilter }) => {
   const filters = ['All', 'Fresh Today'];
-  
+
   const baseButtonClass = "px-6 py-2.5 rounded-full font-semibold text-md transition-all duration-300";
   const activeButtonClass = "bg-ice-blue text-slate-900 shadow";
   const inactiveButtonClass = "bg-slate-800 text-slate-300 hover:bg-slate-700";
@@ -186,7 +185,7 @@ const ProductFilters: React.FC<{
   return (
     <div className="mb-12 flex flex-col md:flex-row items-center justify-center gap-4">
       <div className="relative w-full md:w-72">
-        <input 
+        <input
           type="text"
           placeholder="Search products..."
           value={searchTerm}
@@ -197,9 +196,9 @@ const ProductFilters: React.FC<{
       </div>
       <div className="flex items-center gap-2 p-1 bg-slate-800/50 rounded-full border border-slate-700/50">
         {filters.map(filter => (
-          <button 
-            key={filter} 
-            onClick={() => setActiveFilter(filter)} 
+          <button
+            key={filter}
+            onClick={() => setActiveFilter(filter)}
             className={`${baseButtonClass} ${activeFilter === filter ? activeButtonClass : inactiveButtonClass}`}
           >
             {filter}
@@ -218,46 +217,46 @@ const AdminSidebar: React.FC<{
   const baseClasses = "flex items-center space-x-3 w-full text-left p-3 rounded-md transition-colors text-lg";
   const activeClasses = "bg-sky-600 text-white";
   const inactiveClasses = "text-slate-300 hover:bg-slate-700";
-  
+
   return (
-      <aside className="w-64 bg-slate-800 p-4 flex flex-col">
-          <div className="text-white text-2xl font-bold mb-10 pl-2 font-serif">
-              Admin Panel
-          </div>
-          <nav>
-              <ul className="space-y-2">
-                  <li>
-                      <button onClick={() => onNavigate('dashboard')} className={`${baseClasses} ${activeView === 'dashboard' ? activeClasses : inactiveClasses}`}>
-                          <DashboardIcon className="w-6 h-6" />
-                          <span>Dashboard</span>
-                      </button>
-                  </li>
-                  <li>
-                      <button onClick={() => onNavigate('products')} className={`${baseClasses} ${activeView === 'products' ? activeClasses : inactiveClasses}`}>
-                          <BoxIcon className="w-6 h-6" />
-                          <span>Products</span>
-                      </button>
-                  </li>
-                  <li>
-                      <button onClick={() => onNavigate('homepage')} className={`${baseClasses} ${activeView === 'homepage' ? activeClasses : inactiveClasses}`}>
-                          <HomeIcon className="w-6 h-6" />
-                          <span>Homepage</span>
-                      </button>
-                  </li>
-                  <li>
-                      <button onClick={() => onNavigate('settings')} className={`${baseClasses} ${activeView === 'settings' ? activeClasses : inactiveClasses}`}>
-                          <SettingsIcon className="w-6 h-6" />
-                          <span>Site Settings</span>
-                      </button>
-                  </li>
-              </ul>
-          </nav>
-      </aside>
+    <aside className="w-64 bg-slate-800 p-4 flex flex-col">
+      <div className="text-white text-2xl font-bold mb-10 pl-2 font-serif">
+        Admin Panel
+      </div>
+      <nav>
+        <ul className="space-y-2">
+          <li>
+            <button onClick={() => onNavigate('dashboard')} className={`${baseClasses} ${activeView === 'dashboard' ? activeClasses : inactiveClasses}`}>
+              <DashboardIcon className="w-6 h-6" />
+              <span>Dashboard</span>
+            </button>
+          </li>
+          <li>
+            <button onClick={() => onNavigate('products')} className={`${baseClasses} ${activeView === 'products' ? activeClasses : inactiveClasses}`}>
+              <BoxIcon className="w-6 h-6" />
+              <span>Products</span>
+            </button>
+          </li>
+          <li>
+            <button onClick={() => onNavigate('homepage')} className={`${baseClasses} ${activeView === 'homepage' ? activeClasses : inactiveClasses}`}>
+              <HomeIcon className="w-6 h-6" />
+              <span>Homepage</span>
+            </button>
+          </li>
+          <li>
+            <button onClick={() => onNavigate('settings')} className={`${baseClasses} ${activeView === 'settings' ? activeClasses : inactiveClasses}`}>
+              <SettingsIcon className="w-6 h-6" />
+              <span>Site Settings</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
   );
 }
 
 // --- Admin Dashboard View ---
-const AdminDashboard: React.FC<{productCount: number; freshCount: number;}> = ({productCount, freshCount}) => {
+const AdminDashboard: React.FC<{ productCount: number; freshCount: number; }> = ({ productCount, freshCount }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div className="bg-slate-800 p-6 rounded-lg shadow-xl">
@@ -327,7 +326,7 @@ const AdminHomepageContent: React.FC<{
           placeholder="Enter announcement text..."
         />
       </div>
-       <div className="space-y-4">
+      <div className="space-y-4">
         <h3 className="text-xl font-semibold text-slate-200 mb-3">"About Us" Section</h3>
         <textarea
           value={content.aboutText}
@@ -382,49 +381,49 @@ const AdminSettings: React.FC<{
   };
 
   return (
-     <div className="bg-slate-800 p-6 rounded-lg shadow-2xl max-w-4xl mx-auto">
-        <h2 className="text-2xl font-semibold mb-6 border-b border-slate-700 pb-4 font-serif">Site Appearance</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          {/* Logo Uploader */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-slate-200">Site Logo</h3>
-            <div className="relative group w-48 h-48 mx-auto">
-              <img src={logoUrl} alt="Current Logo" className="w-full h-full rounded-full object-contain shadow-md bg-slate-700" />
-              <button
-                onClick={() => logoInputRef.current?.click()}
-                className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"
-                aria-label="Change logo"
-              >
-                <CameraIcon className="w-8 h-8 text-white" />
-              </button>
-            </div>
-            <input type="file" ref={logoInputRef} onChange={(e) => handleFileChange(e, onLogoChange)} className="hidden" accept="image/*" />
-            <p className="text-center text-slate-400 text-sm">Hover over the image to change the logo.</p>
-          </div>
+    <div className="bg-slate-800 p-6 rounded-lg shadow-2xl max-w-4xl mx-auto">
+      <h2 className="text-2xl font-semibold mb-6 border-b border-slate-700 pb-4 font-serif">Site Appearance</h2>
 
-          {/* Background Uploader */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-slate-200">Homepage Background</h3>
-            <div className="relative group w-full h-48">
-              {backgroundUrl ? (
-                <img src={backgroundUrl} alt="Current Background" className="w-full h-full rounded-md object-cover shadow-md bg-slate-700" />
-              ) : (
-                <div className="w-full h-full rounded-md bg-slate-700 flex items-center justify-center text-slate-400">No background set</div>
-              )}
-              <button
-                onClick={() => bgInputRef.current?.click()}
-                className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
-                aria-label="Change background image"
-              >
-                <CameraIcon className="w-8 h-8 text-white" />
-              </button>
-            </div>
-             <input type="file" ref={bgInputRef} onChange={(e) => handleFileChange(e, onBackgroundChange)} className="hidden" accept="image/*" />
-             <p className="text-center text-slate-400 text-sm">Hover over the image to change the background.</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        {/* Logo Uploader */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold text-slate-200">Site Logo</h3>
+          <div className="relative group w-48 h-48 mx-auto">
+            <img src={logoUrl} alt="Current Logo" className="w-full h-full rounded-full object-contain shadow-md bg-slate-700" />
+            <button
+              onClick={() => logoInputRef.current?.click()}
+              className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"
+              aria-label="Change logo"
+            >
+              <CameraIcon className="w-8 h-8 text-white" />
+            </button>
           </div>
+          <input type="file" ref={logoInputRef} onChange={(e) => handleFileChange(e, onLogoChange)} className="hidden" accept="image/*" />
+          <p className="text-center text-slate-400 text-sm">Hover over the image to change the logo.</p>
+        </div>
+
+        {/* Background Uploader */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold text-slate-200">Homepage Background</h3>
+          <div className="relative group w-full h-48">
+            {backgroundUrl ? (
+              <img src={backgroundUrl} alt="Current Background" className="w-full h-full rounded-md object-cover shadow-md bg-slate-700" />
+            ) : (
+              <div className="w-full h-full rounded-md bg-slate-700 flex items-center justify-center text-slate-400">No background set</div>
+            )}
+            <button
+              onClick={() => bgInputRef.current?.click()}
+              className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
+              aria-label="Change background image"
+            >
+              <CameraIcon className="w-8 h-8 text-white" />
+            </button>
+          </div>
+          <input type="file" ref={bgInputRef} onChange={(e) => handleFileChange(e, onBackgroundChange)} className="hidden" accept="image/*" />
+          <p className="text-center text-slate-400 text-sm">Hover over the image to change the background.</p>
         </div>
       </div>
+    </div>
   );
 };
 
@@ -467,7 +466,7 @@ const AdminPage: React.FC<{
     }
     setLoading(false);
   };
-  
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -483,8 +482,8 @@ const AdminPage: React.FC<{
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProductName || !newProductPrice || !newProductImageFile) {
-        alert("Please fill all fields and select an image.");
-        return;
+      alert("Please fill all fields and select an image.");
+      return;
     }
 
     const fileExt = newProductImageFile.name.split('.').pop();
@@ -494,21 +493,21 @@ const AdminPage: React.FC<{
     const { error: uploadError } = await supabase.storage.from('images').upload(filePath, newProductImageFile);
 
     if (uploadError) {
-        console.error('Error uploading image:', uploadError);
-        return;
+      console.error('Error uploading image:', uploadError);
+      return;
     }
 
     const { data: urlData } = supabase.storage.from('images').getPublicUrl(filePath);
 
     await props.onAddProduct({ name: newProductName, price: newProductPrice, imageUrl: urlData.publicUrl, isFresh: isNewProductFresh });
-    
+
     setNewProductName('');
     setNewProductPrice('');
     setNewProductImageFile(null);
     setNewProductImageUrl('');
     setIsNewProductFresh(false);
-    if(imageInputRef.current) {
-        imageInputRef.current.value = "";
+    if (imageInputRef.current) {
+      imageInputRef.current.value = "";
     }
   };
 
@@ -533,7 +532,7 @@ const AdminPage: React.FC<{
               />
             </div>
             <div className="mb-6">
-              <label htmlFor="password"className="block mb-2 text-sm font-medium text-slate-400">Password</label>
+              <label htmlFor="password" className="block mb-2 text-sm font-medium text-slate-400">Password</label>
               <input
                 id="password"
                 type="password"
@@ -561,66 +560,66 @@ const AdminPage: React.FC<{
       <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-8">
-              <h1 className="text-4xl font-bold font-serif capitalize">
-                {adminView}
-              </h1>
-              <div>
-                <button onClick={props.onNavigateHome} className="text-slate-400 hover:text-white mr-4">&larr; View Site</button>
-                <button onClick={props.onLogout} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                  Logout
-                </button>
-              </div>
+            <h1 className="text-4xl font-bold font-serif capitalize">
+              {adminView}
+            </h1>
+            <div>
+              <button onClick={props.onNavigateHome} className="text-slate-400 hover:text-white mr-4">&larr; View Site</button>
+              <button onClick={props.onLogout} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                Logout
+              </button>
+            </div>
           </div>
-          
+
           {adminView === 'dashboard' && <AdminDashboard productCount={props.products.length} freshCount={freshCount} />}
-          
+
           {adminView === 'products' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-1 bg-slate-800 p-6 rounded-lg shadow-2xl self-start">
-                  <h2 className="text-2xl font-semibold mb-4 font-serif">Add New Product</h2>
-                  <form onSubmit={handleAddProduct} className="space-y-4">
-                       <div>
-                          <label htmlFor="new-product-name" className="block text-sm font-medium text-slate-400 mb-1">Product Name</label>
-                          <input id="new-product-name" type="text" value={newProductName} onChange={e => setNewProductName(e.target.value)} className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500" required />
-                      </div>
-                      <div>
-                          <label htmlFor="new-product-price" className="block text-sm font-medium text-slate-400 mb-1">Product Price</label>
-                          <input id="new-product-price" type="text" value={newProductPrice} onChange={e => setNewProductPrice(e.target.value)} className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500" required />
-                      </div>
-                      <div>
-                        <label htmlFor="new-product-image" className="block text-sm font-medium text-slate-400 mb-1">Product Image</label>
-                        <input id="new-product-image" type="file" ref={imageInputRef} onChange={handleImageChange} className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-300 hover:file:bg-slate-600 transition-colors" accept="image/*" required />
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <input type="checkbox" id="is-fresh" checked={isNewProductFresh} onChange={e => setIsNewProductFresh(e.target.checked)} className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-sky-500 focus:ring-sky-500"/>
-                        <label htmlFor="is-fresh" className="text-sm font-medium text-slate-400">Mark as "Fresh Today"</label>
-                      </div>
-                      {newProductImageUrl && <img src={newProductImageUrl} alt="Preview" className="mt-2 rounded-md max-h-32 object-contain mx-auto" />}
-                      <button type="submit" className="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-4 rounded-md transition-colors duration-300">Add Product</button>
-                  </form>
+                <h2 className="text-2xl font-semibold mb-4 font-serif">Add New Product</h2>
+                <form onSubmit={handleAddProduct} className="space-y-4">
+                  <div>
+                    <label htmlFor="new-product-name" className="block text-sm font-medium text-slate-400 mb-1">Product Name</label>
+                    <input id="new-product-name" type="text" value={newProductName} onChange={e => setNewProductName(e.target.value)} className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500" required />
+                  </div>
+                  <div>
+                    <label htmlFor="new-product-price" className="block text-sm font-medium text-slate-400 mb-1">Product Price</label>
+                    <input id="new-product-price" type="text" value={newProductPrice} onChange={e => setNewProductPrice(e.target.value)} className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500" required />
+                  </div>
+                  <div>
+                    <label htmlFor="new-product-image" className="block text-sm font-medium text-slate-400 mb-1">Product Image</label>
+                    <input id="new-product-image" type="file" ref={imageInputRef} onChange={handleImageChange} className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-300 hover:file:bg-slate-600 transition-colors" accept="image/*" required />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input type="checkbox" id="is-fresh" checked={isNewProductFresh} onChange={e => setIsNewProductFresh(e.target.checked)} className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-sky-500 focus:ring-sky-500" />
+                    <label htmlFor="is-fresh" className="text-sm font-medium text-slate-400">Mark as "Fresh Today"</label>
+                  </div>
+                  {newProductImageUrl && <img src={newProductImageUrl} alt="Preview" className="mt-2 rounded-md max-h-32 object-contain mx-auto" />}
+                  <button type="submit" className="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-4 rounded-md transition-colors duration-300">Add Product</button>
+                </form>
               </div>
 
               <div className="lg:col-span-2 bg-slate-800 p-6 rounded-lg shadow-2xl">
-                  <h2 className="text-2xl font-semibold mb-4 font-serif">Manage Products</h2>
-                  <div className="overflow-y-auto pr-2">
-                      <ProductList products={props.products} isAdmin={true} onDelete={(name) => {
-                        const product = props.products.find(p => p.name === name);
-                        if (product && product.id) props.onDeleteProduct(product.id)
-                      }} onEdit={props.onEditProduct} />
-                  </div>
+                <h2 className="text-2xl font-semibold mb-4 font-serif">Manage Products</h2>
+                <div className="overflow-y-auto pr-2">
+                  <ProductList products={props.products} isAdmin={true} onDelete={(name) => {
+                    const product = props.products.find(p => p.name === name);
+                    if (product && product.id) props.onDeleteProduct(product.id)
+                  }} onEdit={props.onEditProduct} />
+                </div>
               </div>
             </div>
           )}
 
           {adminView === 'homepage' && (
-            <AdminHomepageContent 
+            <AdminHomepageContent
               content={props.homepageContent}
               onContentChange={props.onHomepageContentChange}
             />
           )}
 
           {adminView === 'settings' && (
-            <AdminSettings 
+            <AdminSettings
               logoUrl={props.logoUrl}
               onLogoChange={props.onLogoChange}
               backgroundUrl={props.backgroundUrl}
@@ -636,9 +635,9 @@ const AdminPage: React.FC<{
 
 // --- Loading Component ---
 const LoadingSpinner: React.FC = () => (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-brand-blue"></div>
-    </div>
+  <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-brand-blue"></div>
+  </div>
 );
 
 
@@ -656,6 +655,23 @@ const App: React.FC = () => {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+
+  // Handle URL-based routing
+  useEffect(() => {
+    const checkRoute = () => {
+      const path = window.location.pathname;
+      if (path === '/admin') {
+        setPage('admin');
+      } else {
+        setPage('home');
+      }
+    };
+
+    checkRoute();
+    window.addEventListener('popstate', checkRoute);
+
+    return () => window.removeEventListener('popstate', checkRoute);
+  }, []);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -680,14 +696,15 @@ const App: React.FC = () => {
     fetchInitialData();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-        setUser(session?.user ?? null);
-        if (event === 'SIGNED_IN') {
-            setPage('admin');
-        }
+      setUser(session?.user ?? null);
+      if (event === 'SIGNED_IN') {
+        setPage('admin');
+        window.history.pushState({}, '', '/admin');
+      }
     });
 
     return () => {
-        authListener.subscription.unsubscribe();
+      authListener.subscription.unsubscribe();
     };
   }, []);
 
@@ -698,24 +715,24 @@ const App: React.FC = () => {
     }
     if (error) console.error("Error adding product:", error);
   };
-  
+
   const deleteProduct = async (productId: number) => {
     const { error } = await supabase.from('products').delete().eq('id', productId);
     if (!error) {
-        setProducts(prev => prev.filter(p => p.id !== productId));
+      setProducts(prev => prev.filter(p => p.id !== productId));
     } else {
-        console.error("Error deleting product:", error);
+      console.error("Error deleting product:", error);
     }
   };
-  
+
   const updateProduct = async (originalName: string, updatedProduct: FishProduct) => {
-      const { id, ...updateData } = updatedProduct;
-      const { data, error } = await supabase.from('products').update(updateData).eq('id', id).select();
-      if (data) {
-          setProducts(prev => prev.map(p => (p.id === id ? data[0] : p)));
-      }
-      if (error) console.error("Error updating product:", error);
-      setEditingProduct(null);
+    const { id, ...updateData } = updatedProduct;
+    const { data, error } = await supabase.from('products').update(updateData).eq('id', id).select();
+    if (data) {
+      setProducts(prev => prev.map(p => (p.id === id ? data[0] : p)));
+    }
+    if (error) console.error("Error updating product:", error);
+    setEditingProduct(null);
   };
 
   const handleLogoChange = async (newLogoUrl: string) => {
@@ -727,27 +744,34 @@ const App: React.FC = () => {
     setBackgroundUrl(newBgUrl);
     await supabase.from('site_settings').update({ background_url: newBgUrl }).eq('id', 1);
   };
-  
+
   const handleContentChange = async (field: keyof HomepageContent, value: string) => {
     setHomepageContent(prev => ({ ...prev, [field]: value }));
     await supabase.from('homepage_content').update({ [field]: value }).eq('id', 1);
   };
 
   const handleEditClick = useCallback((product: FishProduct) => {
-      setEditingProduct(product);
+    setEditingProduct(product);
   }, []);
 
   const handleLogout = useCallback(async () => {
     await supabase.auth.signOut();
     setUser(null);
     setPage('home');
+    window.history.pushState({}, '', '/');
   }, []);
-  const navigateToAdmin = useCallback(() => setPage('admin'), []);
-  const navigateToHome = useCallback(() => setPage('home'), []);
-  
+  const navigateToAdmin = useCallback(() => {
+    setPage('admin');
+    window.history.pushState({}, '', '/admin');
+  }, []);
+  const navigateToHome = useCallback(() => {
+    setPage('home');
+    window.history.pushState({}, '', '/');
+  }, []);
+
   useEffect(() => {
     const bannerDismissed = sessionStorage.getItem('bannerDismissed');
-    if(bannerDismissed || !homepageContent.announcementText) {
+    if (bannerDismissed || !homepageContent.announcementText) {
       setIsBannerVisible(false);
     } else {
       setIsBannerVisible(true);
@@ -769,7 +793,7 @@ const App: React.FC = () => {
       })
       .filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [products, activeFilter, searchTerm]);
-  
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -777,14 +801,13 @@ const App: React.FC = () => {
   return (
     <>
       {page === 'home' && (
-        <HomePage 
+        <HomePage
           logoUrl={logoUrl}
           backgroundUrl={backgroundUrl}
           hours={hours}
           content={homepageContent}
           isBannerVisible={isBannerVisible}
           onDismissBanner={handleDismissBanner}
-          onNavigateToAdmin={navigateToAdmin}
           filteredProducts={filteredProducts}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -793,7 +816,7 @@ const App: React.FC = () => {
         />
       )}
       {page === 'admin' && (
-        <AdminPage 
+        <AdminPage
           user={user}
           onLogout={handleLogout}
           products={products}
@@ -810,7 +833,7 @@ const App: React.FC = () => {
         />
       )}
       {editingProduct && (
-        <EditProductModal 
+        <EditProductModal
           product={editingProduct}
           onSave={updateProduct}
           onClose={() => setEditingProduct(null)}
