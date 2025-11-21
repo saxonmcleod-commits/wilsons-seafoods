@@ -121,7 +121,7 @@ const HomePage: React.FC<{
         />
       )}
 
-      <Header logoUrl={logoUrl} />
+      <Header logo={logoUrl} />
 
       {/* Hero Section */}
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
