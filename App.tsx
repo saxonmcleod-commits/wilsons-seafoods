@@ -1093,37 +1093,65 @@ const App: React.FC = () => {
 
   const handleLogoChange = async (newLogoUrl: string) => {
     setLogoUrl(newLogoUrl);
-    await supabase.from('site_settings').update({ logo_url: newLogoUrl }).eq('id', 1);
+    const { error } = await supabase.from('site_settings').update({ logo_url: newLogoUrl }).eq('id', 1);
+    if (error) {
+      console.error('Error updating logo:', error);
+      alert('Failed to save logo. Please check browser console for details.');
+    }
   };
 
   const handleBackgroundChange = async (newBgUrl: string) => {
     setBackgroundUrl(newBgUrl);
-    await supabase.from('site_settings').update({ background_url: newBgUrl }).eq('id', 1);
+    const { error } = await supabase.from('site_settings').update({ background_url: newBgUrl }).eq('id', 1);
+    if (error) {
+      console.error('Error updating background:', error);
+      alert('Failed to save background. Please check browser console for details.');
+    }
   };
 
   const handleContentChange = async (field: keyof HomepageContent, value: string) => {
     setHomepageContent(prev => ({ ...prev, [field]: value }));
-    await supabase.from('homepage_content').update({ [field]: value }).eq('id', 1);
+    const { error } = await supabase.from('homepage_content').update({ [field]: value }).eq('id', 1);
+    if (error) {
+      console.error('Error updating content:', error);
+      alert('Failed to save content. Please check browser console for details.');
+    }
   };
 
   const handleSocialLinksChange = async (newLinks: SocialLinks) => {
     setSocialLinks(newLinks);
-    await supabase.from('site_settings').update({ social_links: newLinks }).eq('id', 1);
+    const { error } = await supabase.from('site_settings').update({ social_links: newLinks }).eq('id', 1);
+    if (error) {
+      console.error('Error updating social links:', error);
+      alert('Failed to save social links. Please check browser console for details.');
+    }
   };
 
   const handleOpeningHoursChange = async (newHours: OpeningHour[]) => {
     setHours(newHours);
-    await supabase.from('site_settings').update({ opening_hours: newHours }).eq('id', 1);
+    const { error } = await supabase.from('site_settings').update({ opening_hours: newHours }).eq('id', 1);
+    if (error) {
+      console.error('Error updating opening hours:', error);
+      alert('Failed to save opening hours. Please check browser console for details.');
+    }
   };
 
   const handleAbnChange = async (newAbn: string) => {
     setAbn(newAbn);
-    await supabase.from('site_settings').update({ abn: newAbn }).eq('id', 1);
+    const { error } = await supabase.from('site_settings').update({ abn: newAbn }).eq('id', 1);
+    if (error) {
+      console.error('Error updating ABN:', error);
+      alert('Failed to save ABN. Please check browser console for details.');
+    }
   };
 
   const handlePhoneNumberChange = async (newPhoneNumber: string) => {
     setPhoneNumber(newPhoneNumber);
-    await supabase.from('site_settings').update({ phone_number: newPhoneNumber }).eq('id', 1);
+    const { error } = await supabase.from('site_settings').update({ phone_number: newPhoneNumber }).eq('id', 1);
+    if (error) {
+      console.error('Error updating phone number:', error);
+      alert('Failed to save phone number. Please check browser console for details.');
+    }
   };
 
   const handleEditClick = useCallback((product: FishProduct) => {
