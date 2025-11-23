@@ -6,6 +6,7 @@ export interface FishProduct {
   is_fresh?: boolean;
   is_visible?: boolean;
   category?: string;
+  description?: string;
 }
 
 export interface OpeningHour {
@@ -43,6 +44,7 @@ export interface SiteSettings {
   opening_hours?: OpeningHour[];
   abn?: string;
   phone_number?: string;
+  categories?: string[];
 }
 
 export interface ContactSubmission {

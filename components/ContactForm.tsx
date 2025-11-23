@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import { supabase } from '../supabase';
 
-const ContactForm: React.FC = () => {
+interface ContactFormProps {
+    initialMessage?: string;
+}
+
+const ContactForm = forwardRef<HTMLElement, ContactFormProps>(({ initialMessage = '' }, ref) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState(initialMessage);
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (initialMessage) {
+            setMessage(initialMessage);
+        }
+    }, [initialMessage]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,7 +44,7 @@ const ContactForm: React.FC = () => {
 
     if (submitted) {
         return (
-            <section id="contact" className="text-center bg-slate-800 rounded-xl p-8 md:p-12 border border-slate-700">
+            <section id="contact" ref={ref} className="text-center bg-slate-800 rounded-xl p-8 md:p-12 border border-slate-700">
                 <h2 className="text-3xl font-serif font-bold text-white">Thank You!</h2>
                 <p className="mt-4 text-slate-300 text-lg">Your message has been sent. We'll get back to you shortly.</p>
             </section>
@@ -42,7 +52,7 @@ const ContactForm: React.FC = () => {
     }
 
     return (
-        <section id="contact" className="text-center">
+        <section id="contact" ref={ref} className="text-center">
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Get In Touch</h2>
             <p className="text-slate-400 max-w-2xl mx-auto mb-12">Have a question or a special request? Drop us a line.</p>
             <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 bg-slate-800 p-8 rounded-xl border border-slate-700">
@@ -99,6 +109,6 @@ const ContactForm: React.FC = () => {
             </form>
         </section>
     );
-};
+});
 
 export default ContactForm;

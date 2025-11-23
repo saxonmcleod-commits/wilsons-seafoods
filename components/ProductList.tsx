@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FishProduct } from '../types';
 import { PencilIcon } from './icons/PencilIcon';
+import QuickViewModal from './QuickViewModal';
 
 interface ProductListProps {
   products: FishProduct[];
@@ -8,6 +10,7 @@ interface ProductListProps {
   onDelete?: (productName: string) => void;
   onEdit?: (product: FishProduct) => void;
   onToggleVisibility?: (id: number) => void;
+  onEnquire?: (product: FishProduct) => void;
 }
 
 const XIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -37,24 +40,35 @@ const ProductCard: React.FC<{
   onDelete?: (productName: string) => void;
   onEdit?: (product: FishProduct) => void;
   onToggleVisibility?: (id: number) => void;
-}> = ({ product, isAdmin, onDelete, onEdit, onToggleVisibility }) => (
-  <div className="bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-700 hover:border-brand-blue/50 hover:shadow-2xl hover:shadow-brand-blue/10 transform hover:-translate-y-2 transition-all duration-300 flex flex-col text-left relative group">
+  onQuickView: (product: FishProduct) => void;
+}> = ({ product, isAdmin, onDelete, onEdit, onToggleVisibility, onQuickView }) => (
+  <motion.div
+    layout
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, scale: 0.9 }}
+    whileHover={{ y: -8, transition: { duration: 0.3 } }}
+    className="bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-700 group relative flex flex-col text-left"
+  >
+    {/* Hover Glow Effect */}
+    <div className="absolute inset-0 bg-brand-blue/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
     {product.is_fresh && (
-      <div className="absolute top-4 left-4 z-10 bg-brand-blue text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow">
+      <div className="absolute top-4 left-4 z-20 bg-brand-blue text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
         Fresh Today
       </div>
     )}
     {!product.is_visible && (
-      <div className="absolute top-4 right-14 z-10 bg-slate-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow">
+      <div className="absolute top-4 right-14 z-20 bg-slate-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow">
         Hidden
       </div>
     )}
     {isAdmin && (
-      <div className="absolute top-3 right-3 z-10 flex space-x-2">
+      <div className="absolute top-3 right-3 z-20 flex space-x-2">
         {onToggleVisibility && product.id && (
           <button
-            onClick={() => onToggleVisibility(product.id!)}
-            className={`p-1.5 rounded-full bg-slate-800/60 transition-colors ${product.is_visible !== false ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-400 hover:bg-slate-700 hover:text-white'}`}
+            onClick={(e) => { e.stopPropagation(); onToggleVisibility(product.id!); }}
+            className={`p-1.5 rounded-full bg-slate-800/80 backdrop-blur-sm transition-colors ${product.is_visible !== false ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-400 hover:bg-slate-700 hover:text-white'}`}
             aria-label={product.is_visible !== false ? "Hide product" : "Show product"}
           >
             {product.is_visible !== false ? <EyeIcon /> : <EyeOffIcon />}
@@ -62,8 +76,8 @@ const ProductCard: React.FC<{
         )}
         {onEdit && (
           <button
-            onClick={() => onEdit(product)}
-            className="p-1.5 rounded-full bg-slate-800/60 text-slate-400 hover:bg-sky-600 hover:text-white transition-colors"
+            onClick={(e) => { e.stopPropagation(); onEdit(product); }}
+            className="p-1.5 rounded-full bg-slate-800/80 backdrop-blur-sm text-slate-400 hover:bg-sky-600 hover:text-white transition-colors"
             aria-label={`Edit ${product.name}`}
           >
             <PencilIcon />
@@ -71,8 +85,8 @@ const ProductCard: React.FC<{
         )}
         {onDelete && (
           <button
-            onClick={() => onDelete(product.name)}
-            className="p-1.5 rounded-full bg-slate-800/60 text-slate-400 hover:bg-red-600 hover:text-white transition-colors"
+            onClick={(e) => { e.stopPropagation(); onDelete(product.name); }}
+            className="p-1.5 rounded-full bg-slate-800/80 backdrop-blur-sm text-slate-400 hover:bg-red-600 hover:text-white transition-colors"
             aria-label={`Delete ${product.name}`}
           >
             <XIcon />
@@ -80,35 +94,68 @@ const ProductCard: React.FC<{
         )}
       </div>
     )}
-    <div className="overflow-hidden">
+    <div className="overflow-hidden relative h-64">
       <img
         src={product.image_url}
         alt={product.name}
-        className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500 ease-in-out"
+        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
       />
+      {/* Quick View Overlay */}
+      {!isAdmin && (
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <button
+            onClick={() => onQuickView(product)}
+            className="bg-white/10 backdrop-blur-md border border-white/30 text-white font-semibold py-2 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-white/20"
+          >
+            Quick View
+          </button>
+        </div>
+      )}
     </div>
-    <div className="p-6 flex flex-col flex-grow">
-      <h3 className="text-2xl font-serif font-bold text-white mb-2">{product.name}</h3>
+    <div className="p-6 flex flex-col flex-grow relative z-10">
+      <h3 className="text-2xl font-serif font-bold text-white mb-2 group-hover:text-brand-blue transition-colors">{product.name}</h3>
       <div className="flex-grow" />
       <p className="text-3xl font-bold text-ice-blue mt-4">{product.price}</p>
     </div>
-  </div>
+  </motion.div>
 );
 
-const ProductList: React.FC<ProductListProps> = ({ products, isAdmin = false, onDelete, onEdit, onToggleVisibility }) => {
+const ProductList: React.FC<ProductListProps> = ({ products, isAdmin = false, onDelete, onEdit, onToggleVisibility, onEnquire }) => {
+  const [selectedProduct, setSelectedProduct] = useState<FishProduct | null>(null);
+
   return (
     <>
       {products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {products.map((product) => (
-            <ProductCard key={product.id || product.name} product={product} isAdmin={isAdmin} onDelete={onDelete} onEdit={onEdit} onToggleVisibility={onToggleVisibility} />
-          ))}
-        </div>
+        <motion.div
+          layout
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+        >
+          <AnimatePresence>
+            {products.map((product) => (
+              <ProductCard
+                key={product.id || product.name}
+                product={product}
+                isAdmin={isAdmin}
+                onDelete={onDelete}
+                onEdit={onEdit}
+                onToggleVisibility={onToggleVisibility}
+                onQuickView={setSelectedProduct}
+              />
+            ))}
+          </AnimatePresence>
+        </motion.div>
       ) : (
         <div className="text-center py-16">
           <p className="text-slate-400 text-xl">No products found.</p>
         </div>
       )}
+
+      <QuickViewModal
+        product={selectedProduct}
+        isOpen={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        onEnquire={onEnquire || (() => { })}
+      />
     </>
   );
 };

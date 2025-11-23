@@ -6,18 +6,18 @@ interface EditProductModalProps {
   product: FishProduct;
   onSave: (originalName: string, updatedProduct: FishProduct) => void;
   onClose: () => void;
+  categories: string[];
 }
 
-const EditProductModal: React.FC<EditProductModalProps> = ({ product, onSave, onClose }) => {
+const EditProductModal: React.FC<EditProductModalProps> = ({ product, onSave, onClose, categories }) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [image_url, setImageUrl] = useState('');
   const [is_fresh, setIsFresh] = useState(false);
   const [is_visible, setIsVisible] = useState(true);
   const [category, setCategory] = useState('Fresh Fish');
+  const [description, setDescription] = useState('');
   const imageInputRef = useRef<HTMLInputElement>(null);
-
-  const categories = ['Fresh Fish', 'Shellfish', 'White Fish', 'Sashimi', 'Other'];
 
   useEffect(() => {
     if (product) {
@@ -27,6 +27,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onSave, on
       setIsFresh(product.is_fresh || false);
       setIsVisible(product.is_visible !== false);
       setCategory(product.category || 'Fresh Fish');
+      setDescription(product.description || '');
     }
   }, [product]);
 
@@ -50,7 +51,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onSave, on
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(product.name, { ...product, name, price, image_url, is_fresh, is_visible, category });
+    onSave(product.name, { ...product, name, price, image_url, is_fresh, is_visible, category, description });
   };
 
   if (!product) return null;
@@ -83,6 +84,16 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onSave, on
                 <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
+          </div>
+          <div>
+            <label htmlFor="edit-product-description" className="block text-base font-medium text-slate-300 mb-2">Description</label>
+            <textarea
+              id="edit-product-description"
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-lg h-32"
+              placeholder="Enter product description..."
+            />
           </div>
           <div>
             <label htmlFor="edit-product-image" className="block text-base font-medium text-slate-300 mb-2">Product Image</label>

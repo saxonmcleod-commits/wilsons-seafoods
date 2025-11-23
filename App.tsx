@@ -1,12 +1,14 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { supabase } from './supabase';
 import { User } from '@supabase/supabase-js';
+import { motion } from 'framer-motion';
 
 import Header from './components/Header';
 import ProductList from './components/ProductList';
 import Hours from './components/Hours';
 import Footer from './components/Footer';
 import EditProductModal from './components/EditProductModal';
+import CategoryFilter from './components/CategoryFilter';
 import { OPENING_HOURS, INITIAL_LOGO_URL, INITIAL_HOMEPAGE_CONTENT } from './constants';
 import { FishProduct, OpeningHour, HomepageContent, SiteSettings, SocialLinks, ContactSubmission } from './types';
 import { BoxIcon } from './components/icons/BoxIcon';
@@ -21,6 +23,22 @@ import { SearchIcon } from './components/icons/SearchIcon';
 import { MessageIcon } from './components/icons/MessageIcon';
 import AdminMessages from './components/AdminMessages';
 
+// --- Animation Variants ---
+const fadeInUp = {
+  hidden: { opacity: 0, y: 60 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
 // --- Gateway Section Components ---
 const GatewayCard: React.FC<{
   image_url: string;
@@ -32,7 +50,10 @@ const GatewayCard: React.FC<{
 }> = ({ imageUrl, headline, description, buttonText, buttonHref, onClick }) => {
   const isExternal = buttonHref.startsWith('http');
   return (
-    <div className="glass-panel rounded-xl overflow-hidden group transform transition-all duration-300 hover:shadow-2xl hover:shadow-brand-blue/20 hover:-translate-y-2 flex flex-col h-full border border-white/5">
+    <motion.div
+      variants={fadeInUp}
+      className="glass-panel rounded-xl overflow-hidden group transform transition-all duration-300 hover:shadow-2xl hover:shadow-brand-blue/20 hover:-translate-y-2 flex flex-col h-full border border-white/5"
+    >
       <div className="relative overflow-hidden h-64 flex-shrink-0">
         <img src={imageUrl} alt={headline} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" />
         {/* Dark gradient overlay to make text readable if it moves over image, adds depth */}
@@ -52,13 +73,13 @@ const GatewayCard: React.FC<{
             onClick={onClick}
             target={isExternal ? "_blank" : undefined}
             rel={isExternal ? "noopener noreferrer" : undefined}
-            className="inline-block bg-brand-blue hover:bg-brand-blue/80 text-white font-bold text-lg px-10 py-3.5 rounded-fullyb shadow-lg shadow-brand-blue/30 transform hover:scale-105 transition-all duration-300 border-t border-white/20"
+            className="inline-block bg-brand-blue hover:bg-brand-blue/80 text-white font-bold text-lg px-10 py-3.5 rounded-full shadow-lg shadow-brand-blue/30 transform hover:scale-105 transition-all duration-300 border-t border-white/20"
           >
             {buttonText}
           </a>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -67,7 +88,12 @@ const GatewaySection: React.FC<{
   onSmoothScroll: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }> = ({ content, onSmoothScroll }) => {
   return (
-    <section>
+    <motion.section
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      variants={staggerContainer}
+    >
       <div className="grid md:grid-cols-2 gap-8 md:gap-12">
         <GatewayCard
           imageUrl={content.gateway1_image_url || "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=1200&auto=format&fit=crop"}
@@ -85,7 +111,7 @@ const GatewaySection: React.FC<{
           buttonHref={content.gateway2_button_url || "https://www.fresho.com/"}
         />
       </div>
-    </section>
+    </motion.section>
   );
 };
 
@@ -106,7 +132,11 @@ const HomePage: React.FC<{
   socialLinks: SocialLinks;
   abn: string;
   phoneNumber: string;
-}> = ({ logoUrl, backgroundUrl, hours, content, isBannerVisible, onDismissBanner, filteredProducts, searchTerm, setSearchTerm, activeFilter, setActiveFilter, socialLinks, abn, phoneNumber }) => {
+  categories: string[];
+  onEnquire: (product: FishProduct) => void;
+  contactFormRef: React.RefObject<HTMLElement>;
+  contactMessage: string;
+}> = ({ logoUrl, backgroundUrl, hours, content, isBannerVisible, onDismissBanner, filteredProducts, searchTerm, setSearchTerm, activeFilter, setActiveFilter, socialLinks, abn, phoneNumber, categories, onEnquire, contactFormRef, contactMessage }) => {
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const href = e.currentTarget.getAttribute('href');
@@ -144,7 +174,12 @@ const HomePage: React.FC<{
           )}
         </div>
 
-        <div className="relative z-20 text-center px-4 max-w-5xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="relative z-20 text-center px-4 max-w-5xl mx-auto"
+        >
           <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight drop-shadow-lg">
             {content.hero_title}
           </h1>
@@ -167,7 +202,7 @@ const HomePage: React.FC<{
               Our Story
             </a>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
@@ -177,35 +212,68 @@ const HomePage: React.FC<{
 
         {/* Products Section */}
         <section id="products" className="scroll-mt-24">
-          <div className="text-center mb-12">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="text-center mb-12"
+          >
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">Fresh From The Boat</h2>
             <div className="h-1 w-24 bg-brand-blue mx-auto rounded-full"></div>
-          </div>
+          </motion.div>
 
-          <div className="mb-8 flex justify-center">
-            <div className="relative w-full max-w-md">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-full focus:outline-none focus:ring-2 focus:ring-ice-blue text-white placeholder-slate-400 shadow-lg"
-              />
-              <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="mb-8"
+          >
+            <div className="flex justify-center mb-6">
+              <div className="relative w-full max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-full focus:outline-none focus:ring-2 focus:ring-ice-blue text-white placeholder-slate-400 shadow-lg"
+                />
+                <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              </div>
             </div>
-          </div>
 
-          <ProductList products={filteredProducts} />
+            <CategoryFilter
+              categories={['All', ...categories]}
+              activeCategory={activeFilter}
+              onSelectCategory={setActiveFilter}
+            />
+          </motion.div>
+
+          <ProductList products={filteredProducts} onEnquire={onEnquire} />
         </section>
 
         {/* About Us Section */}
-        <section id="about" className="scroll-mt-24">
+        <motion.section
+          id="about"
+          className="scroll-mt-24"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInUp}
+        >
           <AboutUs text={content.about_text} image_url={content.about_image_url} />
-        </section>
+        </motion.section>
 
         {/* Hours & Location */}
-        <section className="grid md:grid-cols-2 gap-12 items-start">
-          <div className="space-y-8">
+        <motion.section
+          className="grid md:grid-cols-2 gap-12 items-start"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+        >
+          <motion.div variants={fadeInUp} className="space-y-8">
             <div className="text-center md:text-left">
               <h2 className="text-3xl font-serif font-bold text-white mb-6">Visit Our Store</h2>
               <p className="text-slate-400 text-lg mb-8">
@@ -217,8 +285,8 @@ const HomePage: React.FC<{
               </div>
             </div>
             <Hours hours={hours} />
-          </div>
-          <div className="h-[400px] rounded-xl overflow-hidden shadow-2xl border border-slate-700/50">
+          </motion.div>
+          <motion.div variants={fadeInUp} className="h-[400px] rounded-xl overflow-hidden shadow-2xl border border-slate-700/50">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2923.720466628646!2d147.2799489766666!3d-42.82864697116116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xaa6e74f78091157b%3A0x55c65545e143327!2sWilson's%20Seafoods!5e0!3m2!1sen!2sau!4v1709600000000!5m2!1sen!2sau"
               width="100%"
@@ -230,13 +298,19 @@ const HomePage: React.FC<{
               title="Wilson's Seafoods Location"
               className="grayscale hover:grayscale-0 transition-all duration-500"
             ></iframe>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* Contact Section */}
-        <section className="max-w-3xl mx-auto">
-          <ContactForm />
-        </section>
+        <motion.section
+          className="max-w-3xl mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInUp}
+        >
+          <ContactForm ref={contactFormRef} initialMessage={contactMessage} />
+        </motion.section>
       </main>
 
       <Footer socialLinks={socialLinks} abn={abn} phoneNumber={phoneNumber} />
@@ -525,11 +599,14 @@ const AdminSettings: React.FC<{
   onAbnChange: (newAbn: string) => void;
   phoneNumber: string;
   onPhoneNumberChange: (newPhoneNumber: string) => void;
-}> = ({ logoUrl, onLogoChange, backgroundUrl, onBackgroundChange, socialLinks, onSocialLinksChange, openingHours, onOpeningHoursChange, abn, onAbnChange, phoneNumber, onPhoneNumberChange }) => {
+  categories: string[];
+  onCategoriesChange: (newCategories: string[]) => void;
+}> = ({ logoUrl, onLogoChange, backgroundUrl, onBackgroundChange, socialLinks, onSocialLinksChange, openingHours, onOpeningHoursChange, abn, onAbnChange, phoneNumber, onPhoneNumberChange, categories, onCategoriesChange }) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const bgInputRef = useRef<HTMLInputElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingBg, setUploadingBg] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void, setLoading: (loading: boolean) => void) => {
     const file = e.target.files?.[0];
@@ -556,6 +633,17 @@ const AdminSettings: React.FC<{
       alert('Failed to upload image');
       setLoading(false);
     }
+  };
+
+  const addCategory = () => {
+    if (newCategory && !categories.includes(newCategory)) {
+      onCategoriesChange([...categories, newCategory]);
+      setNewCategory('');
+    }
+  };
+
+  const removeCategory = (categoryToRemove: string) => {
+    onCategoriesChange(categories.filter(c => c !== categoryToRemove));
   };
 
   return (
@@ -642,6 +730,31 @@ const AdminSettings: React.FC<{
         </div>
       </div>
 
+      {/* Categories Management */}
+      <div className="border-t border-slate-700 pt-6 mt-8">
+        <h3 className="text-xl font-semibold text-slate-200 mb-4">Product Categories</h3>
+        <div className="flex gap-2 mb-4">
+          <input
+            type="text"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            placeholder="New Category Name"
+            className="flex-1 px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-white"
+          />
+          <button onClick={addCategory} className="bg-brand-blue hover:bg-sky-500 text-white font-bold py-2 px-4 rounded-md transition-colors">
+            Add
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {categories.map(cat => (
+            <div key={cat} className="bg-slate-700 text-white px-3 py-1 rounded-full flex items-center gap-2">
+              <span>{cat}</span>
+              <button onClick={() => removeCategory(cat)} className="text-slate-400 hover:text-red-400 font-bold">&times;</button>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Social Links */}
       <div className="border-t border-slate-700 pt-6 mt-8">
         <h3 className="text-xl font-semibold text-slate-200 mb-4">Social Media Links</h3>
@@ -725,7 +838,6 @@ const AdminSettings: React.FC<{
   );
 };
 
-
 // --- Admin Page Component ---
 const AdminPage: React.FC<{
   user: User | null;
@@ -750,6 +862,8 @@ const AdminPage: React.FC<{
   onAbnChange: (newAbn: string) => void;
   phoneNumber: string;
   onPhoneNumberChange: (newPhoneNumber: string) => void;
+  categories: string[];
+  onCategoriesChange: (newCategories: string[]) => void;
 }> = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -760,13 +874,12 @@ const AdminPage: React.FC<{
   const [newProductImageFile, setNewProductImageFile] = useState<File | null>(null);
   const [newProductImageUrl, setNewProductImageUrl] = useState<string>('');
   const [newProductCategory, setNewProductCategory] = useState('Fresh Fish');
+  const [newProductDescription, setNewProductDescription] = useState('');
   const [isNewProductFresh, setIsNewProductFresh] = useState(false);
   const [isNewProductVisible, setIsNewProductVisible] = useState(true);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [adminView, setAdminView] = useState<'dashboard' | 'products' | 'settings' | 'homepage' | 'messages'>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const categories = ['Fresh Fish', 'Shellfish', 'White Fish', 'Sashimi', 'Other'];
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -817,7 +930,8 @@ const AdminPage: React.FC<{
       image_url: urlData.publicUrl,
       is_fresh: isNewProductFresh,
       is_visible: isNewProductVisible,
-      category: newProductCategory
+      category: newProductCategory,
+      description: newProductDescription
     });
 
     setNewProductName('');
@@ -827,6 +941,7 @@ const AdminPage: React.FC<{
     setIsNewProductFresh(false);
     setIsNewProductVisible(true);
     setNewProductCategory('Fresh Fish');
+    setNewProductDescription('');
     if (imageInputRef.current) {
       imageInputRef.current.value = '';
     }
@@ -937,10 +1052,20 @@ const AdminPage: React.FC<{
                       onChange={e => setNewProductCategory(e.target.value)}
                       className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-white text-lg"
                     >
-                      {categories.map(cat => (
+                      {props.categories.map(cat => (
                         <option key={cat} value={cat}>{cat}</option>
                       ))}
                     </select>
+                  </div>
+                  <div>
+                    <label htmlFor="new-product-description" className="block text-base font-medium text-slate-300 mb-2">Description</label>
+                    <textarea
+                      id="new-product-description"
+                      value={newProductDescription}
+                      onChange={e => setNewProductDescription(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-lg h-32"
+                      placeholder="Enter product description..."
+                    />
                   </div>
                   <div>
                     <label htmlFor="new-product-image" className="block text-base font-medium text-slate-300 mb-2">Product Image</label>
@@ -992,6 +1117,8 @@ const AdminPage: React.FC<{
               onAbnChange={props.onAbnChange}
               phoneNumber={props.phoneNumber}
               onPhoneNumberChange={props.onPhoneNumberChange}
+              categories={props.categories}
+              onCategoriesChange={props.onCategoriesChange}
             />
           )}
 
@@ -1034,6 +1161,10 @@ const App: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('All');
 
 
+  const [categories, setCategories] = useState<string[]>(['Fresh Fish', 'Shellfish', 'Sashimi', 'Platters', 'Other']);
+  const contactFormRef = useRef<HTMLElement>(null);
+  const [contactMessage, setContactMessage] = useState('');
+
   // Handle URL-based routing
   useEffect(() => {
     const checkRoute = () => {
@@ -1057,7 +1188,7 @@ const App: React.FC = () => {
       const { data: productsData, error: productsError } = await supabase.from('products').select('*').order('created_at', { ascending: false });
       if (productsData) setProducts(productsData);
 
-      // Fetch settings (logo, background)
+      // Fetch settings (logo, background, categories)
       const { data: settingsData, error: settingsError } = await supabase.from('site_settings').select('*').limit(1).single();
       if (settingsData) {
         setLogoUrl(settingsData.logo_url);
@@ -1066,6 +1197,7 @@ const App: React.FC = () => {
         if (settingsData.social_links) setSocialLinks(settingsData.social_links);
         if (settingsData.abn) setAbn(settingsData.abn);
         if (settingsData.phone_number) setPhoneNumber(settingsData.phone_number);
+        if (settingsData.categories && settingsData.categories.length > 0) setCategories(settingsData.categories);
       }
 
       // Fetch homepage content
@@ -1202,6 +1334,15 @@ const App: React.FC = () => {
     }
   };
 
+  const handleCategoriesChange = async (newCategories: string[]) => {
+    setCategories(newCategories);
+    const { error } = await supabase.from('site_settings').update({ categories: newCategories }).eq('id', 1);
+    if (error) {
+      console.error('Error updating categories:', error);
+      alert('Failed to save categories. Please check browser console for details.');
+    }
+  };
+
   const handleEditClick = useCallback((product: FishProduct) => {
     setEditingProduct(product);
   }, []);
@@ -1235,6 +1376,13 @@ const App: React.FC = () => {
     sessionStorage.setItem('bannerDismissed', 'true');
   };
 
+  const handleEnquire = (product: FishProduct) => {
+    setContactMessage(`I'm interested in the ${product.name}. Is it available?`);
+    if (contactFormRef.current) {
+      contactFormRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const filteredProducts = useMemo(() => {
     let filtered = products;
 
@@ -1244,13 +1392,18 @@ const App: React.FC = () => {
       filtered = filtered.filter(p => p.name.toLowerCase().includes(lowerTerm));
     }
 
+    // Filter by category
+    if (activeFilter !== 'All') {
+      filtered = filtered.filter(p => p.category === activeFilter);
+    }
+
     // Filter by visibility (only for public view)
     if (page === 'home') {
       filtered = filtered.filter(p => p.is_visible !== false);
     }
 
     return filtered;
-  }, [products, searchTerm, page]);
+  }, [products, searchTerm, page, activeFilter]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -1274,6 +1427,10 @@ const App: React.FC = () => {
           socialLinks={socialLinks}
           abn={abn}
           phoneNumber={phoneNumber}
+          categories={categories}
+          onEnquire={handleEnquire}
+          contactFormRef={contactFormRef}
+          contactMessage={contactMessage}
         />
       )}
       {page === 'admin' && (
@@ -1300,6 +1457,8 @@ const App: React.FC = () => {
           onAbnChange={handleAbnChange}
           phoneNumber={phoneNumber}
           onPhoneNumberChange={handlePhoneNumberChange}
+          categories={categories}
+          onCategoriesChange={handleCategoriesChange}
         />
       )}
       {editingProduct && (
@@ -1307,6 +1466,7 @@ const App: React.FC = () => {
           product={editingProduct}
           onSave={updateProduct}
           onClose={() => setEditingProduct(null)}
+          categories={categories}
         />
       )}
     </>
