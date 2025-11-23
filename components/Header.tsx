@@ -69,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ logo }) => {
         }`}
     >
       {/* Glassmorphism Background Wrapper */}
-      <div className="absolute inset-0 bg-[#0f172a]/70 backdrop-blur-md border-b border-white/10 shadow-lg"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 border-b border-white/10 shadow-lg"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-4">
@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({ logo }) => {
       </div>
 
       {/* Mobile Menu Overlay */}
-      <div className={`fixed inset-0 bg-[#0f172a]/95 backdrop-blur-xl z-40 transition-opacity duration-300 md:hidden ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`fixed inset-0 bg-gradient-to-br from-blue-700 to-blue-900 z-40 transition-opacity duration-300 md:hidden ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="flex justify-end p-6">
           <button onClick={closeMenu} aria-label="Close menu" className="text-slate-300 hover:text-brand-gold">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>

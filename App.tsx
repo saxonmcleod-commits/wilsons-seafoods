@@ -52,7 +52,7 @@ const GatewayCard: React.FC<{
   return (
     <motion.div
       variants={fadeInUp}
-      className="glass-panel rounded-xl overflow-hidden group transform transition-all duration-300 hover:shadow-2xl hover:shadow-brand-blue/20 hover:-translate-y-2 flex flex-col h-full border border-white/5"
+      className="glass-panel rounded-xl overflow-hidden group transform transition-all duration-300 hover:shadow-2xl hover:shadow-brand-blue/20 hover:-translate-y-2 flex flex-col h-full border border-white/10 bg-gradient-to-br from-cyan-900/40 to-blue-900/40 backdrop-blur-sm"
     >
       <div className="relative overflow-hidden h-64 flex-shrink-0">
         <img src={imageUrl} alt={headline} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" />
@@ -150,7 +150,7 @@ const HomePage: React.FC<{
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 text-slate-100 font-sans selection:bg-sky-500/30 relative">
+    <div className="min-h-screen bg-[linear-gradient(135deg,_#1d4ed8_0%,_#1e3a8a_30%,_#0f172a_100%)] text-slate-100 font-sans selection:bg-sky-500/30 relative">
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent pointer-events-none z-0"></div>
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent pointer-events-none z-0"></div>
       {isBannerVisible && (
@@ -163,10 +163,10 @@ const HomePage: React.FC<{
       <Header logo={logoUrl} />
 
       {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[100vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/40 z-10"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-slate-800 z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/10 to-blue-900/60 z-10"></div>
           {backgroundUrl && (
             <div
               className="w-full h-full bg-cover bg-center transform scale-105 animate-slow-zoom"
