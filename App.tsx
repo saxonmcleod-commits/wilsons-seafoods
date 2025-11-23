@@ -288,7 +288,7 @@ const HomePage: React.FC<{
           </motion.div>
           <motion.div variants={fadeInUp} className="h-[400px] rounded-xl overflow-hidden shadow-2xl border border-slate-700/50">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2923.720466628646!2d147.2799489766666!3d-42.82864697116116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xaa6e74f78091157b%3A0x55c65545e143327!2sWilson's%20Seafoods!5e0!3m2!1sen!2sau!4v1709600000000!5m2!1sen!2sau"
+              src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=5%20Sussex%20St,%20Glenorchy%20TAS%207010&t=&z=15&ie=UTF8&iwloc=B&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0 }}
