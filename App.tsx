@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { Analytics } from "@vercel/analytics/react"
 import { supabase } from './supabase';
 import { User } from '@supabase/supabase-js';
 import { motion } from 'framer-motion';
@@ -1473,6 +1474,7 @@ const App: React.FC = () => {
           categories={categories}
         />
       )}
+      <Analytics />
     </>
   );
 };
