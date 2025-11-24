@@ -1,4 +1,4 @@
--- Run this command in your Supabase SQL Editor to add the missing 'categories' column to 'site_settings'
+-- SQL Editor to add the missing 'categories' column to 'site_settings'
 ALTER TABLE site_settings 
 ADD COLUMN IF NOT EXISTS categories text[] DEFAULT ARRAY['Fresh Fish', 'Shellfish', 'White Fish', 'Sashimi', 'Other'];
 
