@@ -12,7 +12,7 @@ const Footer: React.FC<{ socialLinks?: { facebook: string; instagram: string; },
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
           <div>
-            <h3 className="text-xl font-serif font-bold text-white">Wilson's Seafoods</h3>
+            <h3 className="text-xl font-serif font-bold text-white">Wilsons Seafoods</h3>
             <p className="mt-2 text-slate-400">Freshness you can taste, from our shores to your table.</p>
             {abn && <p className="mt-2 text-sm text-slate-500">ABN: {abn}</p>}
           </div>
@@ -36,7 +36,7 @@ const Footer: React.FC<{ socialLinks?: { facebook: string; instagram: string; },
           </div>
         </div>
         <div className="mt-12 border-t border-slate-700 pt-8 text-center">
-          <p>&copy; {new Date().getFullYear()} Wilson's Seafoods. All Rights Reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Wilsons Seafoods. All Rights Reserved.</p>
         </div>
       </div>
     </footer>

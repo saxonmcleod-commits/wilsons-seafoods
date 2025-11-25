@@ -77,13 +77,13 @@ const Header: React.FC<HeaderProps> = ({ logo }) => {
             <div className="flex-shrink-0 transform transition-transform group-hover:scale-105 duration-300">
               <img
                 src={logo}
-                alt="Wilson's Seafoods Logo"
+                alt="Wilsons Seafoods Logo"
                 className="h-20 w-20 md:h-24 md:w-24 rounded-full shadow-lg object-contain bg-white/5 border border-white/10 p-1.5 backdrop-blur-sm"
               />
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-serif font-extrabold tracking-tight text-white group-hover:text-brand-blue transition-colors">
-                Wilson's Seafoods
+                Wilsons Seafoods
               </h1>
               <div className="mt-1 text-sm text-slate-300 hidden sm:block flex flex-col">
                 <span className="flex items-center gap-1">

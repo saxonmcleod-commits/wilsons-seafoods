@@ -259,7 +259,7 @@ const HomePage: React.FC<{
         <motion.section
           id="about"
           className="scroll-mt-24"
-          aria-label="About Wilson's Seafoods"
+          aria-label="About Wilsons Seafoods"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -299,7 +299,7 @@ const HomePage: React.FC<{
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Wilson's Seafoods Location"
+              title="Wilsons Seafoods Location"
               className="grayscale hover:grayscale-0 transition-all duration-500"
             ></iframe>
           </motion.div>
