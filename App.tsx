@@ -23,6 +23,7 @@ import ContactForm from './components/ContactForm';
 import { SearchIcon } from './components/icons/SearchIcon';
 import { MessageIcon } from './components/icons/MessageIcon';
 import AdminMessages from './components/AdminMessages';
+import SchemaMarkup from './components/SEO/SchemaMarkup';
 
 // --- Animation Variants ---
 const fadeInUp = {
@@ -56,7 +57,7 @@ const GatewayCard: React.FC<{
       className="glass-panel rounded-xl overflow-hidden group transform transition-all duration-300 hover:shadow-2xl hover:shadow-brand-blue/20 hover:-translate-y-2 flex flex-col h-full border border-white/10 bg-gradient-to-br from-cyan-900/40 to-blue-900/40 backdrop-blur-sm"
     >
       <div className="relative overflow-hidden h-64 flex-shrink-0">
-        <img src={imageUrl} alt={headline} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" />
+        <img src={imageUrl} alt={headline} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" />
         {/* Dark gradient overlay to make text readable if it moves over image, adds depth */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
       </div>
@@ -1417,26 +1418,35 @@ const App: React.FC = () => {
   return (
     <>
       {page === 'home' && (
-        <HomePage
-          logoUrl={logoUrl}
-          backgroundUrl={backgroundUrl}
-          hours={hours}
-          content={homepageContent}
-          isBannerVisible={isBannerVisible}
-          onDismissBanner={handleDismissBanner}
-          filteredProducts={filteredProducts}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          activeFilter={activeFilter}
-          setActiveFilter={setActiveFilter}
-          socialLinks={socialLinks}
-          abn={abn}
-          phoneNumber={phoneNumber}
-          categories={categories}
-          onEnquire={handleEnquire}
-          contactFormRef={contactFormRef}
-          contactMessage={contactMessage}
-        />
+        <>
+          <HomePage
+            logoUrl={logoUrl}
+            backgroundUrl={backgroundUrl}
+            hours={hours}
+            content={homepageContent}
+            isBannerVisible={isBannerVisible}
+            onDismissBanner={handleDismissBanner}
+            filteredProducts={filteredProducts}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+            socialLinks={socialLinks}
+            abn={abn}
+            phoneNumber={phoneNumber}
+            categories={categories}
+            onEnquire={handleEnquire}
+            contactFormRef={contactFormRef}
+            contactMessage={contactMessage}
+          />
+          <SchemaMarkup
+            content={homepageContent}
+            hours={hours}
+            socialLinks={socialLinks}
+            phoneNumber={phoneNumber}
+            abn={abn}
+          />
+        </>
       )}
       {page === 'admin' && (
         <AdminPage

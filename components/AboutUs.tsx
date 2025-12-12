@@ -18,6 +18,7 @@ const AboutUs: React.FC<AboutUsProps> = ({ text, image_url }) => {
         <img
           src={image_url}
           alt="Wilsons Seafoods storefront"
+          loading="lazy"
           className="rounded-xl shadow-lg w-full h-auto object-cover aspect-[4/3]"
         />
       </div>
