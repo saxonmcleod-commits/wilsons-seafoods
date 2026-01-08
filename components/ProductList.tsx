@@ -53,11 +53,23 @@ const ProductCard: React.FC<{
     {/* Hover Glow Effect */}
     <div className="absolute inset-0 bg-brand-blue/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-    {product.is_fresh && (
-      <div className="absolute top-4 left-4 z-20 bg-brand-blue text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
-        Fresh Today
-      </div>
-    )}
+    <div className="absolute top-4 left-4 z-20 flex flex-col items-start gap-2">
+      {product.is_fresh && (
+        <div className="bg-brand-blue text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+          Fresh Today
+        </div>
+      )}
+      {product.on_order && (
+        <div className="bg-amber-500 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+          On Order
+        </div>
+      )}
+      {product.out_of_stock && (
+        <div className="bg-red-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+          Out of Stock
+        </div>
+      )}
+    </div>
     {!product.is_visible && (
       <div className="absolute top-4 right-14 z-20 bg-slate-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow">
         Hidden

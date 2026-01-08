@@ -14,6 +14,8 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onSave, on
   const [price, setPrice] = useState('');
   const [image_url, setImageUrl] = useState('');
   const [is_fresh, setIsFresh] = useState(false);
+  const [on_order, setOnOrder] = useState(false);
+  const [out_of_stock, setOutOfStock] = useState(false);
   const [is_visible, setIsVisible] = useState(true);
   const [category, setCategory] = useState('Fresh Fish');
   const [description, setDescription] = useState('');
@@ -25,6 +27,8 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onSave, on
       setPrice(product.price);
       setImageUrl(product.image_url);
       setIsFresh(product.is_fresh || false);
+      setOnOrder(product.on_order || false);
+      setOutOfStock(product.out_of_stock || false);
       setIsVisible(product.is_visible !== false);
       setCategory(product.category || 'Fresh Fish');
       setDescription(product.description || '');
@@ -51,7 +55,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onSave, on
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(product.name, { ...product, name, price, image_url, is_fresh, is_visible, category, description });
+    onSave(product.name, { ...product, name, price, image_url, is_fresh, on_order, out_of_stock, is_visible, category, description });
   };
 
   if (!product) return null;
@@ -109,6 +113,14 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onSave, on
           <div className="flex items-center space-x-3 pt-2">
             <input type="checkbox" id="edit-is-fresh" checked={is_fresh} onChange={e => setIsFresh(e.target.checked)} className="h-5 w-5 rounded border-slate-600 bg-slate-700 text-sky-500 focus:ring-sky-500" />
             <label htmlFor="edit-is-fresh" className="text-base font-medium text-slate-300">Mark as "Fresh Today"</label>
+          </div>
+          <div className="flex items-center space-x-3 pt-2">
+            <input type="checkbox" id="edit-on-order" checked={on_order} onChange={e => setOnOrder(e.target.checked)} className="h-5 w-5 rounded border-slate-600 bg-slate-700 text-amber-500 focus:ring-amber-500" />
+            <label htmlFor="edit-on-order" className="text-base font-medium text-slate-300">Mark as "On Order"</label>
+          </div>
+          <div className="flex items-center space-x-3 pt-2">
+            <input type="checkbox" id="edit-out-of-stock" checked={out_of_stock} onChange={e => setOutOfStock(e.target.checked)} className="h-5 w-5 rounded border-slate-600 bg-slate-700 text-red-500 focus:ring-red-500" />
+            <label htmlFor="edit-out-of-stock" className="text-base font-medium text-slate-300">Mark as "Out of Stock"</label>
           </div>
           <div className="flex items-center space-x-3 pt-2">
             <input type="checkbox" id="edit-is-visible" checked={is_visible} onChange={e => setIsVisible(e.target.checked)} className="h-5 w-5 rounded border-slate-600 bg-slate-700 text-sky-500 focus:ring-sky-500" />

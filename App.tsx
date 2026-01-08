@@ -9,6 +9,7 @@ import ProductList from './components/ProductList';
 import Hours from './components/Hours';
 import Footer from './components/Footer';
 import EditProductModal from './components/EditProductModal';
+import ReorderProductsModal from './components/ReorderProductsModal';
 import CategoryFilter from './components/CategoryFilter';
 import { OPENING_HOURS, INITIAL_LOGO_URL, INITIAL_HOMEPAGE_CONTENT } from './constants';
 import { FishProduct, OpeningHour, HomepageContent, SiteSettings, SocialLinks, ContactSubmission } from './types';
@@ -870,6 +871,7 @@ const AdminPage: React.FC<{
   onPhoneNumberChange: (newPhoneNumber: string) => void;
   categories: string[];
   onCategoriesChange: (newCategories: string[]) => void;
+  onReorderProducts: (newOrder: FishProduct[]) => void;
 }> = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -882,10 +884,13 @@ const AdminPage: React.FC<{
   const [newProductCategory, setNewProductCategory] = useState('Fresh Fish');
   const [newProductDescription, setNewProductDescription] = useState('');
   const [isNewProductFresh, setIsNewProductFresh] = useState(false);
+  const [isNewProductOnOrder, setIsNewProductOnOrder] = useState(false);
+  const [isNewProductOutOfStock, setIsNewProductOutOfStock] = useState(false);
   const [isNewProductVisible, setIsNewProductVisible] = useState(true);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [adminView, setAdminView] = useState<'dashboard' | 'products' | 'settings' | 'homepage' | 'messages'>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isReorderModalOpen, setIsReorderModalOpen] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -935,6 +940,8 @@ const AdminPage: React.FC<{
       price: newProductPrice,
       image_url: urlData.publicUrl,
       is_fresh: isNewProductFresh,
+      on_order: isNewProductOnOrder,
+      out_of_stock: isNewProductOutOfStock,
       is_visible: isNewProductVisible,
       category: newProductCategory,
       description: newProductDescription
@@ -945,6 +952,8 @@ const AdminPage: React.FC<{
     setNewProductImageFile(null);
     setNewProductImageUrl('');
     setIsNewProductFresh(false);
+    setIsNewProductOnOrder(false);
+    setIsNewProductOutOfStock(false);
     setIsNewProductVisible(true);
     setNewProductCategory('Fresh Fish');
     setNewProductDescription('');
@@ -1040,7 +1049,23 @@ const AdminPage: React.FC<{
           {adminView === 'products' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-1 bg-slate-800 p-4 sm:p-6 rounded-lg shadow-2xl self-start">
-                <h2 className="text-2xl font-semibold mb-4 font-serif">Add New Product</h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-semibold font-serif">Add New Product</h2>
+                  <button
+                    onClick={() => setIsReorderModalOpen(true)}
+                    className="text-sm bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded transition-colors flex items-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="8" y1="6" x2="21" y2="6"></line>
+                      <line x1="8" y1="12" x2="21" y2="12"></line>
+                      <line x1="8" y1="18" x2="21" y2="18"></line>
+                      <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                      <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                      <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                    Reorder
+                  </button>
+                </div>
                 <form onSubmit={handleAddProduct} className="space-y-5">
                   <div>
                     <label htmlFor="new-product-name" className="block text-base font-medium text-slate-300 mb-2">Product Name</label>
@@ -1082,6 +1107,14 @@ const AdminPage: React.FC<{
                     <label htmlFor="is-fresh" className="text-base font-medium text-slate-300">Mark as "Fresh Today"</label>
                   </div>
                   <div className="flex items-center space-x-3">
+                    <input type="checkbox" id="is-on-order" checked={isNewProductOnOrder} onChange={e => setIsNewProductOnOrder(e.target.checked)} className="h-5 w-5 rounded border-slate-600 bg-slate-700 text-amber-500 focus:ring-amber-500" />
+                    <label htmlFor="is-on-order" className="text-base font-medium text-slate-300">Mark as "On Order"</label>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <input type="checkbox" id="is-out-of-stock" checked={isNewProductOutOfStock} onChange={e => setIsNewProductOutOfStock(e.target.checked)} className="h-5 w-5 rounded border-slate-600 bg-slate-700 text-red-500 focus:ring-red-500" />
+                    <label htmlFor="is-out-of-stock" className="text-base font-medium text-slate-300">Mark as "Out of Stock"</label>
+                  </div>
+                  <div className="flex items-center space-x-3">
                     <input type="checkbox" id="is-visible" checked={isNewProductVisible} onChange={e => setIsNewProductVisible(e.target.checked)} className="h-5 w-5 rounded border-slate-600 bg-slate-700 text-sky-500 focus:ring-sky-500" />
                     <label htmlFor="is-visible" className="text-base font-medium text-slate-300">Show on public site</label>
                   </div>
@@ -1102,39 +1135,56 @@ const AdminPage: React.FC<{
             </div>
           )}
 
-          {adminView === 'homepage' && (
-            <AdminHomepageContent
-              content={props.homepageContent}
-              onContentChange={props.onHomepageContentChange}
-            />
-          )}
+          {
+            isReorderModalOpen && (
+              <ReorderProductsModal
+                products={props.products}
+                isOpen={isReorderModalOpen}
+                onClose={() => setIsReorderModalOpen(false)}
+                onSave={props.onReorderProducts}
+              />
+            )
+          }
 
-          {adminView === 'settings' && (
-            <AdminSettings
-              logoUrl={props.logoUrl}
-              onLogoChange={props.onLogoChange}
-              backgroundUrl={props.backgroundUrl}
-              onBackgroundChange={props.onBackgroundChange}
-              socialLinks={props.socialLinks}
-              onSocialLinksChange={props.onSocialLinksChange}
-              openingHours={props.openingHours}
-              onOpeningHoursChange={props.onOpeningHoursChange}
-              abn={props.abn}
-              onAbnChange={props.onAbnChange}
-              phoneNumber={props.phoneNumber}
-              onPhoneNumberChange={props.onPhoneNumberChange}
-              categories={props.categories}
-              onCategoriesChange={props.onCategoriesChange}
-            />
-          )}
+          {
+            adminView === 'homepage' && (
+              <AdminHomepageContent
+                content={props.homepageContent}
+                onContentChange={props.onHomepageContentChange}
+              />
+            )
+          }
 
-          {adminView === 'messages' && (
-            <AdminMessages />
-          )}
+          {
+            adminView === 'settings' && (
+              <AdminSettings
+                logoUrl={props.logoUrl}
+                onLogoChange={props.onLogoChange}
+                backgroundUrl={props.backgroundUrl}
+                onBackgroundChange={props.onBackgroundChange}
+                socialLinks={props.socialLinks}
+                onSocialLinksChange={props.onSocialLinksChange}
+                openingHours={props.openingHours}
+                onOpeningHoursChange={props.onOpeningHoursChange}
+                abn={props.abn}
+                onAbnChange={props.onAbnChange}
+                phoneNumber={props.phoneNumber}
+                onPhoneNumberChange={props.onPhoneNumberChange}
+                categories={props.categories}
+                onCategoriesChange={props.onCategoriesChange}
+              />
+            )
+          }
 
-        </div>
-      </main>
-    </div>
+          {
+            adminView === 'messages' && (
+              <AdminMessages />
+            )
+          }
+
+        </div >
+      </main >
+    </div >
   );
 };
 
@@ -1191,7 +1241,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       // Fetch products
-      const { data: productsData, error: productsError } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+      const { data: productsData, error: productsError } = await supabase.from('products').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
       if (productsData) setProducts(productsData);
 
       // Fetch settings (logo, background, categories)
@@ -1269,6 +1319,38 @@ const App: React.FC = () => {
       setProducts(prev => prev.map(p => p.id === productId ? data[0] : p));
     }
     if (error) console.error("Error toggling visibility:", error);
+  };
+
+  const updateProductOrder = async (newOrder: FishProduct[]) => {
+    // Optimistic update
+    setProducts(newOrder);
+
+    // Batch update logic
+    // Supabase JS client doesn't have a direct upsert for multiple items with different updates easily without a loop or RPC
+    // But for small lists, a loop is fine, or we can use upsert if we include all fields.
+    // Better approach: We only want to update sort_order.
+
+    const updates = newOrder.map((product, index) => ({
+      id: product.id,
+      sort_order: index,
+      name: product.name // Include required field if necessary, but id should be enough for upsert/update
+    }));
+
+    // Note: Supabase upsert requires unique constraint on id.
+    // We need to be careful not to overwrite other fields if we use upsert with partial data.
+    // So we will perform multiple update calls for now as it's safer without custom RPC.
+    // Using Promise.all for parallel requests.
+
+    try {
+      await Promise.all(newOrder.map((product, index) =>
+        supabase.from('products').update({ sort_order: index }).eq('id', product.id)
+      ));
+      console.log('Order updated successfully');
+    } catch (error) {
+      console.error("Error updating product order:", error);
+      alert("Failed to save order. Please try again.");
+      // Re-fetch or revert on error ideally
+    }
   };
 
   const handleLogoChange = async (newLogoUrl: string) => {
@@ -1474,6 +1556,7 @@ const App: React.FC = () => {
           onPhoneNumberChange={handlePhoneNumberChange}
           categories={categories}
           onCategoriesChange={handleCategoriesChange}
+          onReorderProducts={updateProductOrder}
         />
       )}
       {editingProduct && (

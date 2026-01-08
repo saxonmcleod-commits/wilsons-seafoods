@@ -47,11 +47,23 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                                     alt={product.name}
                                     className="w-full h-full object-cover"
                                 />
-                                {product.is_fresh && (
-                                    <div className="absolute top-4 left-4 bg-brand-blue text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
-                                        Fresh Today
-                                    </div>
-                                )}
+                                <div className="absolute top-4 left-4 flex flex-col items-start gap-2">
+                                    {product.is_fresh && (
+                                        <div className="bg-brand-blue text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+                                            Fresh Today
+                                        </div>
+                                    )}
+                                    {product.on_order && (
+                                        <div className="bg-amber-500 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+                                            On Order
+                                        </div>
+                                    )}
+                                    {product.out_of_stock && (
+                                        <div className="bg-red-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+                                            Out of Stock
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <div className="w-full md:w-1/2 p-8 flex flex-col relative">
                                 <button

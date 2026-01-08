@@ -4,7 +4,10 @@ export interface FishProduct {
   price: string;
   image_url: string;
   is_fresh?: boolean;
+  on_order?: boolean;
+  out_of_stock?: boolean;
   is_visible?: boolean;
+  sort_order?: number;
   category?: string;
   description?: string;
 }
